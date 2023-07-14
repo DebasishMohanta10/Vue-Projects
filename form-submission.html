@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Submission</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+</head>
+<body>
+    <div id="app" class="container">
+        <form @submit.prevent="handleSubmit" method="post">
+            <div class="mb-2">
+                <label for="name">Name:</label><br>
+                <input type="text" name="name" id="name" v-model="name" class="form-control">
+            </div>
+
+            <div class="mb-2">
+                <label for="email">Email:</label><br>
+                <input type="email" name="email" id="name" v-model="email" class="form-control">
+            </div>
+
+            <div class="mb-2">
+                <label for="message">Message:</label><br>
+                <textarea rows="5" cols="40" name="message" id="message" v-model="message" class="form-control"></textarea>
+            </div>
+            
+            <input type="submit" value="Send Message" class="btn btn-primary form-control">
+        </form>
+
+        <div>
+            {{response.status}}
+        </div>
+    </div>
+
+    <script>
+        const App = {
+            data(){
+                return{
+                    name: '',
+                    email: '',
+                    message: '',
+                    response: ''
+                }
+            },
+            methods: {
+                
+                handleSubmit(){
+                    const formData = new FormData();
+                    formData.append('name', this.name);
+                    formData.append('email',this.email );
+                    formData.append('message', this.message);
+                    fetch('http://localhost:8000/api/messages/',{
+                        method: 'POST',
+                        body: formData
+                    }).then(response => {
+                        this.response = response;
+                    }).then(err => {
+                        console.log(err);
+                    })
+
+                    this.name = '',
+                    this.email = '',
+                    this.message = '' 
+                }
+            }
+
+
+        }
+
+        Vue.createApp(App).mount('#app')
+    </script>
+</body>
+</html>
